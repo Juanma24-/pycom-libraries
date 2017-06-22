@@ -9,3 +9,6 @@ pressure = MPL3115A2(py)
 tempHum = SI7006A20(py)
 ambientLight = LTR329ALS01(py)
 acc = LIS2HH12(py)
+
+bat = py.read_battery_voltage()
+print(ambientLight.lux())
