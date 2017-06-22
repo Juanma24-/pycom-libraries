@@ -22,7 +22,7 @@ class HumedadSensor:
         HumedadSensor.tempHum = SI7006A20(pysense)
         if (HumedadSensor.tempHum is not None):
             print('Cargado Sensor Humedad con éxito')
-            self.__alarmh = Timer.Alarm(self.leerhumedad, self.interval, periodic=True)
+            self.alarmh = Timer.Alarm(self.leerhumedad, self.interval, periodic=True)
     def leerhumedad(self,alarmh):
         self.raw = HumedadSensor.tempHum.humidity()
         self._compare_update()
@@ -34,7 +34,7 @@ class HumedadSensor:
         else:
             self.update = 0
     def desactPub(self):
-        self.alarm.cancel()
+        self.alarmh.cancel()
         print("Desactivada publicación Sensor Humedad")
     def activarPub(self):
         self.alarmh.cancel()

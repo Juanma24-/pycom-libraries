@@ -11,7 +11,7 @@ from PresionSensor import PresionSensor
 from HumedadSensor import HumedadSensor
 import ujson
 import machine
-import binascii
+import ubinascii
 import builtins
 import os
 
@@ -21,7 +21,7 @@ class Gestion:
     """
     acc = None
 
-    def __init__(self,sd=0,id=None):
+    def __init__(self,sd=0):
         self.ambientLight = LuzSensor();
         self.pressure = PresionSensor();
         self.tempHum = HumedadSensor();
@@ -37,40 +37,42 @@ class Gestion:
             Crea un objto JSON con las lecturas de todos los sensores que han sido
             leídos desde la última publicación.
         """
-        if self.id is None:
-            buf = '{\"d\":{\"id\":\"FFFF\"'        #ID del dispositivo
-            length = len(buf)                      #Longitud del Buffer
-        else:
-            buf = '{\"d\":{\"id\":\"%s\"' %(self.id)        #ID del dispositivo
-            length = len(buf)                               #Longitud del Buffer
-
+        buf = '{'
+        length = len(buf)                      #Longitud del Buffer
         """ Se comprueba la propiedad update de cada sensor por separado y se va
             sumando al buf de conversión a JSON
         """
         if self.ambientLight.update is 1:
-            buf += ',\"light\":%d'  %self.ambientLight.raw[0]
+            buf += '\"light\":%d,'  %self.ambientLight.raw[0]
             print('Añadido valor luminosidad a JSON')
             self.ambientLight.update = 0
             length = len(buf)
         if self.pressure.update is 1:
-            buf += ',\"pressure\":%f'  %self.pressure.raw
+            buf += '\"pressure\":%f,'  %self.pressure.raw
             print('Añadido valor presion a JSON')
             self.pressure.update = 0
             length = len(buf)
         if self.tempHum.update is 1:
-            buf += ',\"humidity\":%f'  %self.tempHum.raw
+            buf += '\"humidity\":%f'  %self.tempHum.raw
             print('Añadido valor humedad a JSON')
             self.tempHum.update = 0
             length = len(buf)
-        buf += '}}'
+        buf += '}'
         length = len(buf)
         """ Se crea el objeto JSON. Si hay error en la convesión se imprime
             por pantalla y devuelve un 0.
         """
+        if buf is '{}':
+            return 0
         print(buf)
+        bufhex = ubinascii.hexlify(buf)
+        print(bufhex)
         try:
             payload = ujson.loads(buf)
-            return (buf,payload)
+            print(payload)
+            return (bufhex,payload)
+            if self.sd is 1:
+                guardarEnSD(buf);
         except ValueError:
             print('Error al intentar crear el objeto JSON')
             return 0

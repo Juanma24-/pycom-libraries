@@ -10,6 +10,13 @@ instrucciones necesarias para configurar el dispositivo Lopy para realizar la
 conexión con éxito primero con el Network Server TTN y posterirormente con el
 cloud vía MQTT.
 
+__IMPORTANTE__
+
+Tutoriales de inicio:
+* https://github.com/ttn-liv/devices/wiki/Getting-started-with-the-PyCom-LoPy
+* https://docs.pycom.io/pycom_esp32/index.html
+
+
 Arquitectura de la app
 --------------------------------------------------------------------------------
 La app se puede dividir en dos grupos, archivos de programa y librerías de control
@@ -42,7 +49,7 @@ NETWORK SERVER__
 
 ### Subscripción
 ```
-mosquitto_sub -h eu.thethings.network -t '<AppId/devices/<DevID>/up' -u '<AppID>' -P '<AppKey>' -v
+mosquitto_sub -h eu.thethings.network:1883 -t '<AppId/devices/<DevID>/up' -u '<AppID>' -P '<AppKey>' -v
 ```
 Todos los campos a rellenar pueden ser encontrados en la descripción de la app
 creada en TTN.
