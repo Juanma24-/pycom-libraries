@@ -6,7 +6,6 @@ from onewire import OneWire
 #DS18B20 data line connected to pin P10
 ow = OneWire(Pin('P10'))
 temp = DS18X20(ow)
-
 while True:
     temp.start_convertion()
     time.sleep(1)

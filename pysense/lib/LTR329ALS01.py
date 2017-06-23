@@ -54,6 +54,8 @@ class LTR329ALS01:
         data1 = self.i2c.readfrom_mem(ALS_I2CADDR , ALS_DATA_CH1_HIGH, 1)
         data2 = self.i2c.readfrom_mem(ALS_I2CADDR , ALS_DATA_CH0_LOW, 1)
         data3 = self.i2c.readfrom_mem(ALS_I2CADDR , ALS_DATA_CH0_HIGH, 1)
-        data_reg_CH1 = self._concat_hex(data1[0], data0[0])
-        data_reg_CH0 = self._concat_hex(data2[0], data3[0])
+        #data_reg_CH1 = self._concat_hex(data1[0], data0[0])
+        #data_reg_CH0 = self._concat_hex(data2[0], data3[0])
+        data_reg_CH1 = (data1 << 8) | data0
+        data_reg_CH0 = (data3 << 8) | data2
         return(data_reg_CH0, data_reg_CH1)

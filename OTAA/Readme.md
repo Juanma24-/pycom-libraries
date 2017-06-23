@@ -56,7 +56,11 @@ creada en TTN.
 
 ### Publicación
 
-
+CONFIGURACIÓN NANOGATEWAY
+-------------------------------------------------------------------------------
+Para configurar el dispositivo LoPy que actuará como NanoGateway, solo hay que comentar/descomentar algunas líneas del archivo _config.py_. Las líneas corresponden a la configuración de ID Gateway, dirección del Network Server y puerto de entrada/salida del Netwoek Server, para los dos servidores utilizados: The Things Network y Loriot.
+Es importante mencionar que dado que el gateway hace uso de la conexión Wifi del dispositivo, una vez configurado ya no se estará accesible esta red y por lo tanto el servidor FTP tampoco. Para accerlo accesible de nuevo se ha de conectar el pin P12(G28) a 3V3 al durante los 1-3 primeros segundos del inicio del dispositivo, y luego retirar el puente hecho. Esta acción cargará la configuración del firmware base del dispositivo.
+  
 USO SEVER FTP (Paso archivos a LoPy)
 --------------------------------------------------------------------------------
 Para pasar archivos a LoPy solo hay que conectarse a su punto WiFy propio y configurar

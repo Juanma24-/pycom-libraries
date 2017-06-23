@@ -22,9 +22,10 @@ class Gestion:
     acc = None
 
     def __init__(self,sd=0):
-        self.ambientLight = LuzSensor();
-        self.pressure = PresionSensor();
-        self.tempHum = HumedadSensor();
+        self.py = Pysense()
+        self.ambientLight = LuzSensor(pysense = self.py);
+        self.pressure = PresionSensor(pysense = self.py);
+        self.tempHum = HumedadSensor(pysense = self.py);
         self.mininterval = 0
         self.sd = sd
         self.id = id
@@ -39,24 +40,32 @@ class Gestion:
         """
         buf = '{'
         length = len(buf)                      #Longitud del Buffer
+        tup = (0,0,0,0)
         """ Se comprueba la propiedad update de cada sensor por separado y se va
             sumando al buf de conversión a JSON
         """
         if self.ambientLight.update is 1:
             buf += '\"light\":%d,'  %self.ambientLight.raw[0]
+            tup[0]=self.ambientLight.raw[0]
             print('Añadido valor luminosidad a JSON')
             self.ambientLight.update = 0
             length = len(buf)
         if self.pressure.update is 1:
             buf += '\"pressure\":%f,'  %self.pressure.raw
+            tup[1]=self.pressure.raw
             print('Añadido valor presion a JSON')
             self.pressure.update = 0
             length = len(buf)
         if self.tempHum.update is 1:
-            buf += '\"humidity\":%f'  %self.tempHum.raw
+            buf += '\"humidity\":%f,'  %self.tempHum.raw
+            tup[2]=self.tempHum.raw
             print('Añadido valor humedad a JSON')
             self.tempHum.update = 0
             length = len(buf)
+        if buf is not '{':
+            bat = self.py.read_battery_voltage()
+            buf += '\"Bat\":%d' %bat
+            tup[3] = bat
         buf += '}'
         length = len(buf)
         """ Se crea el objeto JSON. Si hay error en la convesión se imprime
@@ -64,13 +73,14 @@ class Gestion:
         """
         if buf is '{}':
             return 0
-        print(buf)
         bufhex = ubinascii.hexlify(buf)
+        print(buf)
         print(bufhex)
+        print(tup)
         try:
             payload = ujson.loads(buf)
             print(payload)
-            return (bufhex,payload)
+            return (bufhex,payload,tup)
             if self.sd is 1:
                 guardarEnSD(buf);
         except ValueError:
