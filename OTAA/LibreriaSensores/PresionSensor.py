@@ -15,11 +15,11 @@ class PresionSensor:
     def __init__(self, pysense=None):
         if pysense is None:
             self.pysense = Pysense()
-        self.last = 0
-        self.raw = 0
-        self.magic = 'LoPy'
-        self.update = 0
-        self.interval = 20
+        self.last = 0                           # Último valor leído
+        self.raw = 0                            # Valor actual de Presión
+        self.magic = 'LoPy'                     # Para evitar lecturas corruptas de SD
+        self.update = 0                         # Se ha tomado un nuevo valor
+        self.interval = 20                      # Intervalor (s) de toma de datos
         PresionSensor.pressure = MPL3115A2(pysense)
         if (PresionSensor.pressure is not None):
             print('Cargado Sensor Presion con éxito')

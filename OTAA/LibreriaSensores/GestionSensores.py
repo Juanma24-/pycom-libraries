@@ -9,7 +9,6 @@ from pysense import Pysense
 from LuzSensor import LuzSensor
 from PresionSensor import PresionSensor
 from HumedadSensor import HumedadSensor
-import ujson
 import machine
 import ubinascii
 import builtins
@@ -28,64 +27,40 @@ class Gestion:
         self.tempHum = HumedadSensor(pysense = self.py);
         self.mininterval = 0
         self.sd = sd
-        self.id = id
         if self.sd is 1:
             sd = SD()
             os.mount(sd, '/sd')
             os.listdir('/sd')
     def crearjson(self):
         """
-            Crea un objto JSON con las lecturas de todos los sensores que han sido
+            Rellena un tupple con las lecturas de todos los sensores que han sido
             leídos desde la última publicación.
         """
-        buf = '{'
-        length = len(buf)                      #Longitud del Buffer
         tup = (0,0,0,0)
         """ Se comprueba la propiedad update de cada sensor por separado y se va
-            sumando al buf de conversión a JSON
+            sumando al tupple
         """
         if self.ambientLight.update is 1:
-            buf += '\"light\":%d,'  %self.ambientLight.raw[0]
-            tup[0]=self.ambientLight.raw[0]
-            print('Añadido valor luminosidad a JSON')
+            tup[0] = self.ambientLight.raw[0]
+            print('Añadido valor luminosidad a tup')
             self.ambientLight.update = 0
-            length = len(buf)
         if self.pressure.update is 1:
-            buf += '\"pressure\":%f,'  %self.pressure.raw
-            tup[1]=self.pressure.raw
-            print('Añadido valor presion a JSON')
+            tup[1] = self.pressure.raw
+            print('Añadido valor presion a tup')
             self.pressure.update = 0
-            length = len(buf)
         if self.tempHum.update is 1:
-            buf += '\"humidity\":%f,'  %self.tempHum.raw
-            tup[2]=self.tempHum.raw
-            print('Añadido valor humedad a JSON')
+            tup[2] = self.tempHum.raw
+            print('Añadido valor humedad a tup')
             self.tempHum.update = 0
-            length = len(buf)
-        if buf is not '{':
-            bat = self.py.read_battery_voltage()
-            buf += '\"Bat\":%d' %bat
-            tup[3] = bat
-        buf += '}'
-        length = len(buf)
+        tup[3] = self.py.read_battery_voltage()
+        print('Añadido valor batería a tup')
         """ Se crea el objeto JSON. Si hay error en la convesión se imprime
             por pantalla y devuelve un 0.
         """
-        if buf is '{}':
-            return 0
-        bufhex = ubinascii.hexlify(buf)
-        print(buf)
-        print(bufhex)
-        print(tup)
-        try:
-            payload = ujson.loads(buf)
-            print(payload)
-            return (bufhex,payload,tup)
-            if self.sd is 1:
-                guardarEnSD(buf);
-        except ValueError:
-            print('Error al intentar crear el objeto JSON')
-            return 0
+        print('Tupple valores de sensores:' + tup)
+        return (tup)
+        if self.sd is 1:
+            guardarEnSD(buf);
     def intervaloMinimo(self):
         """ Cálculo del intervalo mínimo en la toma de medidas. Este intervalo
             mínimo se usará como intervalo de publicación de los datos vía LoRA.

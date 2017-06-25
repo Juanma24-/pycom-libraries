@@ -14,12 +14,13 @@ class HumedadSensor:
     def __init__(self, pysense=None):
         if pysense is None:
             self.pysense = Pysense()
-        self.last = 0
-        self.raw = 0
-        self.magic = 'LoPy'
-        self.update = 0
-        self.interval = 20
-        HumedadSensor.tempHum = SI7006A20(pysense)
+        self.last = 0                       # Último valor leído Humedad
+        self.raw = 0                        # Valor leído actual Humedad
+        self.rawt = 0                       # Valor leído actual Temperatura
+        self.magic = 'LoPy'                 # Para detectar guardados corruptos
+        self.update = 0                     # El valor de Humedad ha sido actualizado
+        self.interval = 20                  # Intervalo toma de datos
+        HumedadSensor.tempHum = SI7006A20(pysense)  
         if (HumedadSensor.tempHum is not None):
             print('Cargado Sensor Humedad con éxito')
             self.alarmh = Timer.Alarm(self.leerhumedad, self.interval, periodic=True)
@@ -27,6 +28,9 @@ class HumedadSensor:
         self.raw = HumedadSensor.tempHum.humidity()
         self._compare_update()
         print("Humedad: %f" %self.raw)
+    def leertemp(self):
+        self.rawt = HumedadSensor.tempHum.temp()
+        print("Temperatura: %f C" %self.rawt)
     def _compare_update(self):
         if self.raw is not self.last :
             self.last = self.raw

@@ -14,11 +14,11 @@ class LuzSensor:
     def __init__(self, pysense=None):
         if pysense is None:
             self.pysense = Pysense()
-        self.last = 0
-        self.raw = 0
-        self.magic = 'LoPy'
-        self.update = 0
-        self.interval = 20
+        self.last = 0                           # Último valor leído
+        self.raw = 0                            # Actual valor de Luminosidad
+        self.magic = 'LoPy'                     # Para evitar lecturas corruptas en SD
+        self.update = 0                         # El valor de Luminosidad ha sido actualizado
+        self.interval = 20                      # Intervalor de toma de datos
         LuzSensor.ambientLight = LTR329ALS01(pysense)
         if (LuzSensor.ambientLight is not None):
             print('Cargado Sensor Luz con éxito')
